@@ -6,50 +6,52 @@ import com.example.hw25.exception.EmployeeStorageIsFullException;
 import com.example.hw25.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class EmployeeService {
     private static int SIZE = 5;
-    private final Employee[] employees;
+    private final List<Employee> employees;
 
     public EmployeeService() {
-        this.employees = new Employee[SIZE];
+        this.employees = new ArrayList<>();
     }
 
-    public Employee addEmployee(String name,
-                                String surname) {
+    public Employee addEmployee(String name, String surname) {
         Employee employee = new Employee(name, surname);
-        int indexForAdd = -1;
-        for (int i = 0; i < employees.length; i++) {
-            if(employees[i] != null & indexForAdd == -1) {
-                indexForAdd = i;
-            }
-            if(Objects.equals(employee, employees[i])) {
-                throw new EmployeeAlreadyAddedException();
-            }
+        if (employees.contains(employee)) {
+            throw new EmployeeAlreadyAddedException();
         }
-
-        if(indexForAdd == -1) {
-            throw new EmployeeStorageIsFullException();
+        if (employees.size() < SIZE) {
+            employees.add(employee);
+            employees.add(employee);
+            return employee;
         }
-        return employees[indexForAdd] = employee;
+        throw new EmployeeStorageIsFullException();
 
     }
-    public Employee removeEmployee(String name,
-                                String surname) {
+
+    public Employee removeEmployee(String name, String surname) {
         Employee employee = new Employee(name, surname);
-        for (int i = 0; i  < employees.length; i++) {
-            if(employees.equals(employees[i])) {
-                employees[i] = null;
-                return employee;
-            }
+        if (!employees.contains(employee)) {
+            return employee;
+        }
+        throw new EmployeeNotFoundException();
+
+
+    }
+
+    public Employee findEmployee(String name, String surname) {
+        Employee employee = new Employee(name, surname);
+        if (employees.contains(employee)) {
+            employees.remove(employee);
+            return employee;
         }
         throw new EmployeeNotFoundException();
 
     }
-    public Employee findEmployee(String name,
-                                String surname) {
 
+    public List<Employee> getAll() {
+        return Collections.unmodifiableList(employees);
     }
 }

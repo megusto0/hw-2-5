@@ -1,9 +1,13 @@
 package com.example.hw25.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Employee {
+    @JsonProperty("firstName")
     private final String name;
+    @JsonProperty("lastName")
     private final String surName;
 
     public Employee(String name, String surName) {
